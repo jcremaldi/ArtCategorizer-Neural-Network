@@ -1,0 +1,8 @@
+Package                            Version
+---------------------------------- ---------
+Keras                              2.3.1
+Keras-Applications                 1.0.8
+Keras-Preprocessing                1.1.0
+numpy                              1.16.2
+matplotlib                         3.0.3
+Pillow                             6.2.1
