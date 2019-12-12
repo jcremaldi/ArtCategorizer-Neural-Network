@@ -4,29 +4,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.applications.resnet50 import preprocess_input
 from keras.models import load_model, model_from_json
-import pandas as pd
-from math import pi
+
+st.sidebar.header('ArtCategorizer')
 
 def add_model():
     model = load_model('models/keras/model.h5')
     return model
-
 def add_weights(model):
     model.load_weights('models/keras/weights.h5')
     return model
 
-
-data_load_state = st.text('Loading data...')
+st.sidebar.text('Loading data...')
 model = add_model()
 with open('models/keras/architecture.json') as f:
     model = model_from_json(f.read())
 model = add_weights(model)
-data_load_state = st.text('Loading Done!')
+st.sidebar.text('Loading Done!')
 
 path_option = st.sidebar.selectbox('Type of path: ',('Validation files', 'Local'))
 
 if path_option == 'Local':
-    path = st.sidebar.text_input('File Path: ', 'data/validation/Impressionism/88929.jpg')
+    path = st.sidebar.text_input('File Path: ', 'data/validation/Impressionism/78820.jpg')
 elif path_option == 'Validation files':
     mov_option = st.sidebar.selectbox('Art movement: ',('Impressionism', 'Realism', 'Romanticism'))
     if mov_option == 'Impressionism':
@@ -108,50 +106,16 @@ validation_batch = np.stack([preprocess_input(np.array(img.resize((img_size, img
 pred_probs = model.predict(validation_batch)
 fig, axs = plt.subplots(1, len(img_list), figsize=(20, 5))
 
-st.write("{:.0f}% Impressionism, {:.0f}% Realism, {:.0f}% Romanticism".format(100*pred_probs[0,0],
-                                                          100*pred_probs[0,1],
-                                                          100*pred_probs[0,2]))
-st.image(img, caption=None, width = 224, use_column_width=False, clamp=False, channels='RGB', format='JPEG')
+#st.write("{:.0f}% Impressionism, {:.0f}% Realism, {:.0f}% Romanticism".format(100*pred_probs[0,0],
+#                                                          100*pred_probs[0,1],
+#                                                          100*pred_probs[0,2]))
 
-# Set data
-max_pp = max(pred_probs[0,0],pred_probs[0,1],pred_probs[0,2])
+labels = 'Impressionism', 'Realism', 'Romanticism'
+sizes = [pred_probs[0,0], pred_probs[0,1], pred_probs[0,2]]
 
-df = pd.DataFrame({
-'group': ['A'],
-'Imp': [pred_probs[0,0]],
-'Rea': [pred_probs[0,1]],
-'Rom': [pred_probs[0,2]]
-})
- 
-# number of variable
-categories=list(df)[1:]
-N = len(categories)
- 
-# We are going to plot the first line of the data frame.
-# But we need to repeat the first value to close the circular graph:
-values=df.loc[0].drop('group').values.flatten().tolist()
-values += values[:1]
-values
- 
-# What will be the angle of each axis in the plot? (we divide the plot / number of variable)
-angles = [n / float(N) * 2 * pi for n in range(N)]
-angles += angles[:1]
- 
-# Initialise the spider plot
-ax = plt.subplot(111, polar=True)
- 
-# Draw one axe per variable + add labels labels yet
-plt.xticks(angles[:-1], categories, color='grey', size=8)
- 
-# Draw ylabels
-ax.set_rlabel_position(0)
-plt.yticks([0.25,0.50,0.75], ["0.25","0.50","0.75"], color="grey", size=7)
-plt.ylim(0,max_pp)
-
-# Plot data
-ax.plot(angles, values, linewidth=1, linestyle='solid')
- 
-# Fill area
-ax.fill(angles, values, 'b', alpha=0.1)
+fig1, ax1 = plt.subplots()
+ax1.pie(sizes, labels=labels, autopct='%1.1f%%',startangle=90)
+ax1.axis('equal')
 
 st.pyplot()
+st.image(img, caption=None, width = 448, use_column_width=False, clamp=False, channels='RGB', format='JPEG')
