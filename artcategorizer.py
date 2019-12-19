@@ -3,7 +3,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.applications import ResNet50
 from keras.applications.resnet50 import preprocess_input
 from keras import Model, layers
-
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 #------------------------------------------------------------------------------
 train_datagen = ImageDataGenerator(
     shear_range=10,
@@ -28,10 +29,7 @@ validation_generator = validation_datagen.flow_from_directory(
 
 #------------------------------------------------------------------------------
 
-# load pre-trained network, cut off its head and freeze its weights,
-# add custom dense layers (we pick 128 neurons for the hidden layer),
-# set the optimizer and loss function
-
+# load pre-trained network, cut off its head and freeze its weights
 conv_base = ResNet50(include_top=False,
                      weights='imagenet')
 
@@ -41,7 +39,7 @@ for layer in conv_base.layers:
 x = conv_base.output
 x = layers.GlobalAveragePooling2D()(x)
 x = layers.Dense(128, activation='relu')(x)
-predictions = layers.Dense(5, activation='softmax')(x)
+predictions = layers.Dense(4, activation='softmax')(x)
 model = Model(conv_base.input, predictions)
 
 optimizer = keras.optimizers.Adam()

@@ -7,9 +7,11 @@ from keras.models import load_model, model_from_json
 
 st.sidebar.header('ArtCategorizer')
 
+@st.cache(allow_output_mutation=True)
 def add_model():
     model = load_model('models/keras/model.h5')
     return model
+
 def add_weights(model):
     model.load_weights('models/keras/weights.h5')
     return model
@@ -26,75 +28,26 @@ path_option = st.sidebar.selectbox('Type of path: ',('Validation files', 'Local'
 if path_option == 'Local':
     path = st.sidebar.text_input('File Path: ', 'data/validation/Impressionism/78820.jpg')
 elif path_option == 'Validation files':
-    mov_option = st.sidebar.selectbox('Art movement: ',('Impressionism', 'Realism', 'Romanticism'))
+    mov_option = st.sidebar.selectbox('Art movement: ',('Cubism', 'Impressionism', 'Renaissance', 'Surrealism'))    
+    if mov_option == 'Cubism':
+        image_num = st.sidebar.slider('Image number:', 1, 10, 1)
+        art_im = [766,1396,2933,3159,4104,9354,10204,11156,38281,90806]
+        path = ''.join(['data/validation/Cubism/',str(art_im[image_num-1]),'.jpg'])    
     if mov_option == 'Impressionism':
         image_num = st.sidebar.slider('Image number:', 1, 10, 1)
-        if image_num == 1:
-            path = 'data/validation/Impressionism/78820.jpg'
-        if image_num == 2:
-            path = 'data/validation/Impressionism/88929.jpg'
-        if image_num == 3:
-            path = 'data/validation/Impressionism/79600.jpg'
-        if image_num == 4:
-            path = 'data/validation/Impressionism/89945.jpg'
-        if image_num == 5:
-            path = 'data/validation/Impressionism/91114.jpg'
-        if image_num == 6:
-            path = 'data/validation/Impressionism/89497.jpg'
-        if image_num == 7:
-            path = 'data/validation/Impressionism/88728.jpg'
-        if image_num == 8:
-            path = 'data/validation/Impressionism/86708.jpg'
-        if image_num == 9:
-            path = 'data/validation/Impressionism/79694.jpg'
-        if image_num == 10:
-            path = 'data/validation/Impressionism/78370.jpg'
-    if mov_option == 'Realism':
+        art_im = [78820,88929,79600,89945,91114,89497,89497,88728,86708,79694]
+        path = ''.join(['data/validation/Impressionism/',str(art_im[image_num-1]),'.jpg'])
+    if mov_option == 'Renaissance':
         image_num = st.sidebar.slider('Image number:', 1, 10, 1)
-        if image_num == 1:
-            path = 'data/validation/Realism/94223.jpg'
-        if image_num == 2:
-            path = 'data/validation/Realism/96385.jpg'
-        if image_num == 3:
-            path = 'data/validation/Realism/101559.jpg'
-        if image_num == 4:
-            path = 'data/validation/Realism/96386.jpg'
-        if image_num == 5:
-            path = 'data/validation/Realism/94158.jpg'
-        if image_num == 6:
-            path = 'data/validation/Realism/100551.jpg'
-        if image_num == 7:
-            path = 'data/validation/Realism/101332.jpg'
-        if image_num == 8:
-            path = 'data/validation/Realism/100719.jpg'
-        if image_num == 9:
-            path = 'data/validation/Realism/96595.jpg'
-        if image_num == 10:
-            path = 'data/validation/Realism/95094.jpg'
-    if mov_option == 'Romanticism':
+        art_im = [6672,8053,11574,18613,17657,18039,18807,19157,20470,10982]
+        path = ''.join(['data/validation/Renaissance/',str(art_im[image_num-1]),'.jpg'])
+    if mov_option == 'Surrealism':
         image_num = st.sidebar.slider('Image number:', 1, 10, 1)
-        if image_num == 1:
-            path = 'data/validation/Romanticism/47172.jpg'
-        if image_num == 2:
-            path = 'data/validation/Romanticism/48664.jpg'
-        if image_num == 3:
-            path = 'data/validation/Romanticism/50316.jpg'
-        if image_num == 4:
-            path = 'data/validation/Romanticism/46049.jpg'
-        if image_num == 5:
-            path = 'data/validation/Romanticism/49792.jpg'
-        if image_num == 6:
-            path = 'data/validation/Romanticism/47487.jpg'
-        if image_num == 7:
-            path = 'data/validation/Romanticism/49004.jpg'
-        if image_num == 8:
-            path = 'data/validation/Romanticism/50240.jpg'
-        if image_num == 9:
-            path = 'data/validation/Romanticism/47718.jpg'
-        if image_num == 10:
-            path = 'data/validation/Romanticism/48010.jpg'
-
+        art_im = [12042,14634,17306,18372,21897,21500,11030,17896,21755,24870]
+        path = ''.join(['data/validation/Surrealism/',str(art_im[image_num-1]),'.jpg'])
+            
 img = Image.open("%s" % (path)) 
+ 
 
 validation_img_paths = ["%s" % (path)]
 img_list = [Image.open(img_path) for img_path in validation_img_paths]
@@ -110,8 +63,8 @@ fig, axs = plt.subplots(1, len(img_list), figsize=(20, 5))
 #                                                          100*pred_probs[0,1],
 #                                                          100*pred_probs[0,2]))
 
-labels = 'Impressionism', 'Realism', 'Romanticism'
-sizes = [pred_probs[0,0], pred_probs[0,1], pred_probs[0,2]]
+labels = ['Cubism', 'Impressionism', 'Renaissance', 'Surrealism']
+sizes = [pred_probs[0,0], pred_probs[0,1], pred_probs[0,2], pred_probs[0,3]]
 
 fig1, ax1 = plt.subplots()
 ax1.pie(sizes, labels=labels, autopct='%1.1f%%',startangle=90)

@@ -17,8 +17,8 @@ model.load_weights('models/keras/weights.h5')
 #------------------------------------------------------------------------------
 
 print('predict')
-validation_img_paths = ["data/validation/Impressionism/88929.jpg",
-                        "data/validation/Romanticism/46869.jpg"]
+validation_img_paths = ['data/validation/Surrealism/17306.jpg',
+                        'data/validation/Renaissance/18039.jpg']
 img_list = [Image.open(img_path) for img_path in validation_img_paths]
 
 img_size = 224
@@ -32,9 +32,8 @@ fig, axs = plt.subplots(1, len(img_list), figsize=(20, 5))
 for i, img in enumerate(img_list):
     ax = axs[i]
     ax.axis('off')
-    ax.set_title("{:.0f}% Impressionism, {:.0f}% Realism, {:.0f}% Romanticism".format(100*pred_probs[i,0],
-                                                          100*pred_probs[i,1],
-                                                          100*pred_probs[i,2]))
+    ax.set_title("{:.0f}% Cubism, {:.0f}% Impressionism,{:.0f}% Renaissance, {:.0f}% Surrealism" \
+                 .format(100*pred_probs[i,0],100*pred_probs[i,1],100*pred_probs[i,2],100*pred_probs[i,3]))
     ax.imshow(img)
 
 
